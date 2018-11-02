@@ -1,0 +1,822 @@
+// wlog define
+$wlog-theme-color: #2b8af5;
+$wlog-black: #1E2432;
+$wlog-danger: #E74F4F;
+$wlog-background: #3D424C;
+$wlog-text-on-background: #ffffff;
+$wlog-text-in-form: #666666;
+
+@import "/backend/styles/fonts.css";
+@import "/backend/styles/layout.css";
+
+// animation
+@keyframes loading {
+    0%,100%{
+        height: 20px;
+        background: $wlog-black;
+    }
+    50%{
+        height: 40px;
+        background: $wlog-theme-color;
+    }
+}
+@-moz-keyframes loading {
+    0%,100%{
+        height: 20px;
+        background: $wlog-black;
+    }
+    50%{
+        height: 40px;
+        background: $wlog-theme-color;
+    }
+}
+@-webkit-keyframes loading {
+    0%,100%{
+        height: 20px;
+        background: $wlog-black;
+    }
+    50%{
+        height: 40px;
+        background: $wlog-theme-color;
+    }
+}
+
+html, body {
+    font-size: 16px;
+}
+
+// transition
+
+* {
+    margin: 0;
+    padding: 0;
+    transition-duration: .15s;
+    -webkit-transition-duration: .15s;
+    -moz-transition-duration: .15s;
+    transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+    -webkit-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+    -moz-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+    box-sizing: border-box;
+}
+
+// a tag no underline
+a, a:hover {
+    text-decoration: none;
+}
+
+// input components
+button, input, select, textarea {
+    outline: none;
+}
+
+// h1,h2,h3,h4,h5,h6
+h1 {
+    font-size: 6em;
+    font-weight: 300;
+    letter-spacing: -1.5px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+h2 {
+    font-size: 3.75em;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+h3 {
+    font-size: 3em;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+h4 {
+    font-size: 2.125em;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+h5 {
+    font-size: 1.5em;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+h6 {
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: 0.15px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+
+// p.body-1 p.body-2
+p.body-1 {
+    font-size: 1em;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+p.body-2 {
+    font-size: 0.875em;
+    font-weight: 500;
+    letter-spacing: 0.25px;
+    text-transform: capitalize;
+    color: $wlog-black;
+}
+
+// ul,li
+ul, li {
+    list-style: none;
+}
+
+body {
+    font-family: 'Roboto';
+    font-weight: 500;
+    margin: 0;
+    padding-top: 0.1px; // Prevent header h1 margin from pushing body down
+}
+
+// public component
+.wlog-button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: $wlog-black;
+    position: relative;
+    font-size: 0.875em;
+    font-weight: 700;
+    letter-spacing: .75px;
+    text-transform: uppercase;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    em, i {
+        position: relative;
+        z-index: 2;
+    }
+    &::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.05);
+        transform: scale(0);
+        transition-duration: .15s;
+        -webkit-transition-duration: .15s;
+        -moz-transition-duration: .15s;
+        transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+        -webkit-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+        -moz-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+        z-index: 1;
+    }
+    &.wlog-button-small:not(.wlog-button-rect) {
+        width: 36px;
+        height: 36px;
+    }
+    &.wlog-button-regular:not(.wlog-button-rect) {
+        width: 48px;
+        height: 48px;
+    }
+    &.disabled {
+        cursor: none;
+        pointer-events: none;
+        opacity: 0.3;
+    }
+    &:hover {
+        &::before {
+            transform: scale(1);
+        }
+    }
+}
+
+.wlog-input-file-btn {
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    outline: none;
+    background-color: transparent;
+    opacity: 0;
+    z-index: 10000;
+}
+
+.wlog-button-rect {
+    cursor: pointer;
+    background: $wlog-theme-color;
+    padding: 8px 14px;
+    border-radius: 0.5em;
+    box-shadow: rgba(0, 0, 0, 0.04) 0 0 2px 1px;
+    border: none;
+    color: $wlog-text-on-background;
+    font-size: 0.875em;
+    font-weight: 700;
+    letter-spacing: .75px;
+    text-transform: uppercase;
+    position: relative;
+    &.loading {
+        cursor: none;
+        pointer-events: none;
+        opacity: 0.2;
+        position: relative;
+    }
+    &.disabled {
+        cursor: none;
+        pointer-events: none;
+        opacity: 0.3;
+    }
+}
+
+// wlog-table 
+.layout-table 
+{
+    padding: 12px 0;
+    .layout-table__action {
+        padding: 12px;
+        display: flex;
+        justify-content: flex-end;
+        border-bottom: 1px solid #999999;
+    }
+    .layout-table__datatable {
+        width: 100%;
+        border-collapse:collapse;
+        thead {
+            border-bottom: 2px solid #888888;
+            tr {
+                background-color: #ECEFF1;
+            }
+            th {
+                line-height: 2.5;
+                height:22px;
+                color: #999999;
+                text-transform: uppercase;
+                font-size: 0.875em;
+                font-weight: 700;
+            }
+        }
+        tbody {
+            tr {
+                background-color: #FFFFFF;
+                border-bottom: 1px solid #DCDCDC;
+                &:hover {
+                    background-color: #EFEFEF;
+                }
+            }
+            td {
+                line-height: 3.5;
+                height: 32px;
+                font-size: 1em;
+                font-weight: 300;
+                color: #666666;
+                a {
+                    font-size: inherit;
+                    color: inherit;
+                    &:hover {
+                        color: $wlog-theme-color;
+                    }
+                }
+                input[type="checkbox"] {
+                    width: 18px;
+                    height: 18px;
+                }
+                &.buttons-area {
+                    flex-wrap: wrap;
+                    .wlog-button {
+                        display: inline-flex;
+                        border: none;
+                        vertical-align: middle;
+                        background: none;
+                        color: #999999;
+                    }
+                }
+            }
+        }
+        th, td {
+            border-collapse:collapse;
+            text-align: left;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+    }
+}
+
+.home 
+{
+
+    .wlog-drawer 
+    {
+        background-color: $wlog-background;
+    }
+
+    .wlog-header 
+    {
+        background-color: $wlog-black;
+        span {
+            color: $wlog-text-on-background;
+            font-size: 0.875em;
+        }
+    }
+
+    .wlog-drawer__content 
+    {
+        .layout-drawer-list__item {
+            font-size: 1em;
+            line-height: 2;
+            color: $wlog-text-on-background;
+            border-top: 1px solid transparent;
+            border-bottom: 1px solid transparent;
+            em, i {
+                font-size: 0.875em;
+            }
+            &:hover, &.active {
+                background-color: #ffffff;
+                color: $wlog-theme-color;
+                border-top-color: $wlog-background;
+                border-bottom-color: $wlog-background;
+            }
+        }
+        .wlog-drawer__group {
+            font-size: 1.125em;
+            color: $wlog-text-on-background;
+        }
+    }
+
+    .wlog-body 
+    {
+        background-color: #E7E9EC;
+        .wlog-body-header {
+            background-color: #FFFFFF;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            box-shadow: rgba(0, 0, 0, 0.04) 0 0 2px 1px;
+            .wlog-body-header__left {
+                a {
+                    color: $wlog-black;
+                    font-weight: 700;
+                    &:hover {
+                        color: $wlog-theme-color;
+                    }
+                }
+            }
+        }
+        .wlog-body-main {
+            .wlog-card {
+                background-color: #FFFFFF;
+                border-radius: 0.5em;
+                border: 1px solid rgba(0,0,0,.125);
+                box-shadow: rgba(0, 0, 0, 0.04) 0 0 2px 1px;
+            }
+            .wlog-card-form {
+                border-radius: 0.5em;
+                background-color: #ffffff;
+                box-shadow: rgba(0, 0, 0, 0.04) 0 0 4px 1px;
+                form {
+
+                }
+                .wlog-card-input {
+                    border-radius: 0.5em;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+
+                    input {
+                        text-indent: 8px;
+                        font-weight: 700;
+                        color: #666666;
+                    }
+                }
+            }
+            .wlog-table {
+                .wlog-table__action {
+                    .wlog-table-action-input {
+                        width: 240px;
+                        border-radius: 0.5em;
+                        border: 1px solid rgba(0, 0, 0, 0.15);
+                        display: flex;
+                        height: 32px;
+                        padding: 0 8px;
+                        align-items: center;
+                        overflow: hidden;
+                        i, em {
+                            display: inline-flex;
+                            color: #999999;
+                        }
+                        input {
+                            display: block;
+                            border: none;
+                            width: 100%;
+                            height: 100%;
+                            text-indent: 8px;
+                            font-weight: 700;
+                            color: #666666;
+                        }
+                    }
+                }
+            }
+        }
+
+        .wlog-meta-card__list 
+        {
+            .wlog-meta-card {
+                border: 1px solid rgba(0,0,0,.125);
+                background-color: #ffffff;
+                box-shadow: rgba(0, 0, 0, 0.04) 0 0 2px 1px;
+                border-radius: 0.5em;
+                ul {
+                    li {
+                        i, em, span {
+                            color: $wlog-black;
+                            font-size: 0.75em;
+                        }
+                        a {
+                            color: $wlog-theme-color;
+                            font-size: 0.875em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .wlog-writing-area 
+    {
+        .wlog-writing__header {
+            background-color: $wlog-black;
+            box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.05);
+            .wlog-button {
+                color: $wlog-text-on-background;
+                &.active {
+                    background-color: #FFFFFF;
+                    color: $wlog-black;
+                }
+            }
+        }
+        .wlog-writing__body {
+        }
+    }
+
+    // form 
+    .wlog-form-panel 
+    {
+        background-color: #FFFFFF;
+        border-radius: 0.5em;
+        box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 1px;
+        fieldset {
+            border: none;
+        }
+        .cover-container {
+            background-color: #e0e0e0;
+            color: rgb(96, 96, 96);
+            .default-item {
+                i {
+                    font-size: 8em;
+                }
+                .icon {
+                    font-size: 1em;
+                    margin-bottom: 0;
+                }
+            }
+        }
+        .other-subjects {
+        }
+        .wlog-control {
+            border-radius: 0.5em;
+            background-color: #FFFFFF;
+            box-shadow: rgba(0, 0, 0, 0.04) 1px 1px 2px 0;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            label {
+                font-size: 0.875em;
+                padding-right: 8px;
+                border-right: 1px solid #EEEEEE;
+                text-transform: uppercase;
+            }
+            input {
+                text-indent: 4px;
+                font-size: 0.875em;
+                font-weight: 700;
+                color: #888888;
+                outline: none;
+            }
+            textarea {
+                color: #888888;
+                font-size: 1em;
+                font-weight: 700;
+                resize: none;
+            }
+        }
+    }
+
+    .wlog-sidebar-menu 
+    {
+        background-color: #FFFFFF;
+        box-shadow: rgba(0, 0, 0, 0.04) -1px 0 4px 1px; 
+        border-left: 1.5px solid $wlog-black;
+        .images-folder {
+            border-bottom: 1px solid #EEEEEE;
+            .image-list-card {
+                box-shadow: rgba(0, 0, 0, 0.1) 0 0 4px 1px;
+                border: 0.5em;
+                .hidden-oper {
+                    background: rgba(255, 255, 255, 0.6);
+                    transform: translateY(-100%);
+                    button {
+                        font-size: 0.75em;
+                        font-weight: 700;
+                        border: none;
+                        box-shadow: none;
+                        outline: none;
+                        background: transparent;
+                        &:hover {
+                            background: rgba(38, 134, 243, 0.6);
+                            color: $wlog-text-on-background;
+                            // background: rgba(0, 0, 0, 0.4);
+                            // color: #FFF;
+                        }
+                    }
+                }
+                &:hover {
+                    .hidden-oper {
+                        transform: translateY(0%);
+                    }
+                }
+            }
+        }
+    }
+
+    //tab 
+    .wlog-tabs 
+    {
+        nav.layout-tabs__container {
+            span.wlog__indicator {
+                background-color: #DDDDDD;
+            }
+            .wlog-tab {
+                color: $wlog-black;
+                font-size: 1em;
+                &::before {
+                    background: rgba(0, 0, 0, 0.02);
+                    transform: scale(0);
+                    transition: 200ms;
+                }
+                &.wlog-tab--active, &:hover {
+                    color: $wlog-theme-color;
+                    &::before {
+                        transform: scale(1);
+                    }
+                }
+            }
+        }
+    }
+
+    .wlog-tab-panels 
+    {
+        .layout-tab-panels__container 
+        {
+            transform: translate3d(0, 0, 0);
+            transition: 300ms;
+        }
+    }
+
+    .wlog-form-list 
+    {
+        .subjects-list {
+            .wlog-flex-table {
+                border-radius: 0.5em;
+                background-color: #EFEFEF;
+                .flex-table__header {
+                    background-color: #ECEFF1;
+                    border-bottom: 2px solid #888888;
+                    border-radius: 0.5em 0.5em 0 0;
+                    span {
+                        font-size: 0.875em;
+                        font-weight: 700;
+                        color: #999999;
+                    }
+                }
+                .flex-table__body {
+                    span {
+                        font-size: 1em;
+                        font-weight: 300;
+                        color: #666666;
+                        border-bottom: 1px solid #DCDCDC;
+                    }
+                    .flex-table__input {
+                        border-radius: 0.25em;
+                        box-shadow: rgba(0, 0, 0, 0.04) 0 0 2px 1px;
+                        border: none;
+                        text-indent: 4px;
+                        font-size: 0.875em;
+                        color: #888888;
+                        font-weight: 700;
+                    }
+                    .operate {
+                        button {
+                            font-size: 0.75em;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .wlog-cus-select 
+    {
+        label {
+            padding: 4px 8px;
+            border-radius: 0.25em;
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            background-color: #FFFFFF;
+            .default {
+                line-height: 24px;
+            }
+        }
+        .select {
+            background-color: #FFFFFF;
+            border: 1px solid #EEEEEE;
+            border-radius: 0.25em;
+            .select-item {
+                color: #999999;
+                &:hover {
+                    background-color: $wlog-theme-color;
+                    color: #FFFFFF;
+                }
+            }
+        }
+    }
+
+    .wlog-logos-upload
+    {
+        .wlog-upload-item {
+            border-radius: 0.25em;
+            box-shadow: rgba(0, 0, 0, 0.1) 0 0 4px 1px;
+            .flex-form {
+                border-radius: 0.25em;
+                border: 1px solid #EEEEEE;
+            }
+        }
+    }
+
+}
+
+// cover 
+.wlog-cover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+//progress 
+.wlog-progress {
+    background: rgba(255, 255, 255, 0.5);
+    span {
+        background: #1E2426;
+        animation: loading 1s ease infinite;
+        -webkit-animation: loading 1s ease infinite;
+        -moz-animation: loading 1s ease infinite;
+        border-radius: 4px;
+        &:nth-child(2){
+            animation-delay:0.2s;
+            -moz-animation-delay:0.2s;
+            -webkit-animation-delay:0.2s;
+        }
+        &:nth-child(3){
+            animation-delay:0.4s;
+            -moz-animation-delay:0.4s;
+            -webkit-animation-delay:0.4s;
+        }
+        &:nth-child(4){
+            animation-delay:0.6s;
+            -moz-animation-delay:0.6s;
+            -webkit-animation-delay:0.6s;
+        }
+        &:nth-child(5){
+            animation-delay:0.8s;
+            -moz-animation-delay:0.8s;
+            -webkit-animation-delay:0.8s;
+        }
+    }
+}
+
+// file page
+header.wlog-tool__header 
+{
+    .tool-bar__inner {
+        .search {
+            border-radius: 0.25em;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 0 2px 0;
+            color: #999;
+            background-color: #FFFFFF;
+            input {
+                text-indent: 4px;
+                font-size: 0.875em;
+                font-weight: 700;
+                color: #999;
+                border: none;
+            }
+        }
+        .buttons-area {
+            button.focus {
+                background-color: #FFFFFF;
+                color: #000000;
+            }
+            .wlog-delete-confirm {
+                background-color: #E74F4F;
+                color: #FFFFFF;
+            }
+        }
+    }
+}
+
+.wlog-floating-area {
+    .wlog-floating {
+        background-color: #fff;
+        border: 0.25em;
+        box-shadow: rgba(0, 0, 0, 0.1) 0 0 4px;
+    }
+    .list-table, .progress-table {
+        ul {
+            li {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+            span {
+                font-size: 0.75em;
+                font-weight: 300;
+            }
+        }
+    }
+}
+
+.wlog-files 
+{
+    .wlog-img__list {
+        .wlog-img__item {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0.25em;
+            .info {
+                p {
+                    font-size: 0.75em;
+                    font-weight: 300;
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+.wlog-message 
+{
+    background-color: #FFF;
+    border-radius: 0.5em 0.5em 0 0;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px -2px 6px 1px;
+    transform: translateY(50px);
+    &.showing {
+        transform: translateY(0px);
+    }
+    .message__header {
+        button {
+            background: transparent;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    }
+    .message__inner {
+        span {
+            font-size: 1em;
+            font-weight: 300;
+        }
+    }
+}
+
+.wlog-alert 
+{
+    border-radius: 0.5em;
+    box-shadow: rgba(0, 0, 0, 0.2) 1px 1px 8px 1px;
+    border: 1px solid #FFCDCD;
+    background-color: #FFFBFB;
+    .wlog-alert__inner {
+        font-size: 1.125em;
+        color: #FB4A4A;
+    }
+}
+
+.wlog-table__footer 
+{
+    .wlog-page-item {
+        font-size: 0.875em;
+    }
+    .wlog-page-button {
+        border-radius: 0.75em;
+        border: 1px solid #DBDBDB;
+        color: #4A4A4A;
+        background-color: #FFF;
+        box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.08);
+        &:hover {
+            box-shadow: rgba(0, 0, 0, 0.08) 2px 2px 8px 2px;
+        }
+    }
+}

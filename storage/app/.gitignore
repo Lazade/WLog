@@ -1,0 +1,6 @@
+*
+!public/
+!public/apple-touch-icon.png
+!public/favicon.png
+!public/logo.png
+!.gitignore
