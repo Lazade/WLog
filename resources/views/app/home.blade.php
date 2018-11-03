@@ -18,7 +18,7 @@
         @endforeach
     </div>
     <div class="wlog-body__footer">
-        {{ $posts->links('app.widgets.paginate') }}
+        {{ $posts->links('app.Widgets.paginate') }}
     </div>
 </div>
 @endsection
