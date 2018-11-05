@@ -161,6 +161,11 @@ return [
         App\Providers\RouteServiceProvider::class,
         // App\Providers\DropboxProvider::class,
 
+        /* 
+        * Adding Backup-manager service provider to auto backup database
+        */ 
+        BackupManager\Laravel\Laravel55ServiceProvider::class,
+
     ],
 
     /*
