@@ -6,6 +6,10 @@ $wlog-red: #F46660;
 @import "/css/normalize.css";
 @import "/backend/styles/fonts.css";
 
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     font-size: 16px;
     margin: 0;

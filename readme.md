@@ -13,3 +13,5 @@ WLog是一个博客应用，是使用Laravel框架进行开发的个人项目。
 - 2018-11-02: 大致功能基本完成，第一次PUSH到GitHUb
 
 - 2018-11-05: Creating a branch--dev to develop the new feature.
+
+- 2018-11-10: Merge dev branch to Master, Adding Database Auto Backup and Telegram Bot Notify funcitons.

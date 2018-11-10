@@ -1,4 +1,7 @@
-@import url(/css/normalize.css);@import url(/backend/styles/fonts.css);html, body {
+@import url(/css/normalize.css);@import url(/backend/styles/fonts.css);* {
+  box-sizing: border-box; }
+
+html, body {
   font-size: 16px;
   margin: 0;
   padding: 0;

@@ -33,7 +33,7 @@
                             <label>Password</label>
                             <input type="password" id="password-input" name="password" required>
                         </div>
-                        <div class="wlog-input__control layout-input__control wlog-control" style="align-items:center;">
+                        <div class="wlog-control layout-checkbox__control wlog-checkbox__control" style="align-items:center;">
                             <input type="checkbox" id="remember" name="remember" />
                             <label for="remember">Remember?</label>
                         </div>
