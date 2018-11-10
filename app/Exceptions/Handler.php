@@ -5,6 +5,10 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
+use App\Wlog\Handlers\TelegramChatHandler;
+
+use Log;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -34,6 +38,8 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        $log = Log::getLogger();
+        $log->pushHandler(new TelegramChatHandler());
         parent::report($exception);
     }
 

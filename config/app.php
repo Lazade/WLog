@@ -161,10 +161,10 @@ return [
         App\Providers\RouteServiceProvider::class,
         // App\Providers\DropboxProvider::class,
 
-        /* 
-        * Adding Backup-manager service provider to auto backup database
-        */ 
+        // Adding Backup-manager service provider to auto backup database 
         BackupManager\Laravel\Laravel55ServiceProvider::class,
+        // Adding Telegram-bot sdk
+        Telegram\Bot\Laravel\TelegramServiceProvider::class,
 
     ],
 
@@ -214,6 +214,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        // Adding Laravel-Telegram sdk alias
+        'Telegram'  => Telegram\Bot\Laravel\Facades\Telegram::class,
 
     ],
 

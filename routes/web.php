@@ -58,4 +58,8 @@ Route::group(['prefix' => 'avalon', 'middleware' => 'auth', 'namespace' => 'Back
     Route::post('/file/destroy', 'FileController@destroy');
     Route::post('/file/getMore', 'FileController@getMore');
     Route::post('/file/uploadLogo', 'FileController@uploadLogo');
+
+    // Lab test
+    // Route::get('/test', 'LabController@test');
 });
+
