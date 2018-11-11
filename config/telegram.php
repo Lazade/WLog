@@ -16,6 +16,8 @@ return [
     // 'bot_token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
     'bot_token' => env('TELEGRAM_BOT_TOKEN'),
 
+    'your_telegram_id' => env('TELEGRAM_ID', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Asynchronous Requests [Optional]

@@ -61,7 +61,7 @@ class OptionsController extends Controller implements GeneratorInterface
             }
         }
         if (!$flag) {
-            return redirect('avalon/settings')->withInput()->withError($response);
+            return redirect('avalon/settings')->withInput()->withError($this->_response);
         } 
         return redirect('avalon/settings');
     }

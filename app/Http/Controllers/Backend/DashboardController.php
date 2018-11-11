@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $pcount = Posts::count();
         $tpcount = Posts::onlyTrashed()->count();
         $recent_posts = Posts::orderBy('created_at', 'desc')->limit(5)->select('id', 'title', 'created_at', 'flag')->get();
-        return view('backend.dashboard')->with(compact('pcount', 'tpcount', 'recent_posts'));
+        return view('backend.dashboard')->with(compact('pcounts', 'tpcount', 'recent_posts'));
     }
 
     public function refreshSetting()

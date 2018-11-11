@@ -13,7 +13,7 @@ class TelegramChat
     public function sendMessage($text, $mode)
     {
         $response = Telegram::sendMessage([
-            'chat_id' => '411653565', 
+            'chat_id' => config('telegram.your_telegram_id'), 
             'text' => $text,
             'parse_mode' => $mode
         ]);
