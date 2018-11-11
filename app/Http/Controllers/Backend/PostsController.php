@@ -37,10 +37,10 @@ class PostsController extends Controller implements GeneratorInterface
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         $type = 'create';
-        $title = $_REQUEST['title'];
+        $title = $request['title'];
         if (!empty(Posts::where('title', $title)->first())) {
             return redirect()->back()->withInput()->withErrors('The [Title] has existed');
         }
