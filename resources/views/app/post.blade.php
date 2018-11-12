@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="{{ asset('storage/apple-touch-icon.png') }}">
     <link rel="stylesheet" href="{{ asset('css/normalize.css') }}">
     <link rel="stylesheet" href="{{ asset('app/styles/app.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $post->seo_title }}">
     <meta name="twitter:description" content="{{ $post->seo_description }}">
