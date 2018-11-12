@@ -1,0 +1,71 @@
+/* ===========================================================
+   Config
+   =========================================================== */
+
+// general layout
+$layout: center; // left | center | right
+
+// width of content, less than 40 words a row
+$content-width: $font-size * 40;
+
+// font 
+/* typekit, mac, windows, linux, default */
+$font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, 'PingFang SC', Hiragino Sans GB, Droid Sans Fallback, Microsoft YaHei, 'Apple TP', sans-serif;
+$pre-font-family: consolas, manaco, monospace;
+$quote-font-family: Georgia, 'Times New Roman', STKaiti, BiauKai, KaiTi, 'DFKai-SB', 'KaiTi-GB2312', serif;
+
+// indent
+$use-indent: false;
+$h1-text-align: center;
+$h2-text-align: left;
+$h3-text-align: left;
+$h4-text-align: left;
+
+// font color
+$word-color: #424b50;
+
+// title color
+$title-color: #424b50;
+$title-back-color: transparent;
+
+$link-color: #069;
+$link-hightlight-color: #FFF;
+$link-visited-color: #551A88;
+$link-js-hightlight-color: #FFF;
+$link-js-back-color: #96B3D3;
+
+$code-color: $word-color;
+$code-back-color: transparent;
+
+$pre-back-color: #F7F7F9;
+$pre-border-color: #E1E1E8;
+
+$hr-color: #888;
+
+$table-border-color: #DDD;
+$table-highlight-back-color: #F9F9F9;
+
+$img-border-color: #CCC;
+
+$mark-back-color: yellow;
+
+
+/* ==========================================================
+   Optional config
+   ========================================================== */
+
+
+// 多栏样式
+// 设置高度之后，显示成横向阅读
+$use-column: false;     // 设置为true的时候启用多栏样式
+$column-gap: 4em;       // 栏之间的间距
+$column-rule: none;     // eg: 1px solid #CCC; 但不是在间隔中严格居中的，而是靠着内容
+$content-height: 50em;  // 如果内容区的父元素设置了高度，则可以将此处设置为100%
+                        // 推荐一个计算方法是：想要显示的行数 * 行高 = 最终高度值em
+                        // 默认为：30行 * 1.62 = 48.6em
+
+// 标题号
+$use-title-number: false;        // 是否使用标题号
+$title-number-seperator: '.';   // 标题号分割符号，例如: 1.2.1 中的'.'
+$title-number-color: inherit;   // 标题号颜色
+

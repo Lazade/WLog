@@ -80,8 +80,3 @@
     font-weight: 500;
     src: url('/webfonts/jp/apple-tp_text.woff') format('woff');
 }
-
-* {
-    font-family: 'roboto', 'PingFang SC', 'Apple TP', sans-serif;
-    font-style: normal;
-}

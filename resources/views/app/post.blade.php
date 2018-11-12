@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="{{ asset('storage/apple-touch-icon.png') }}">
     <link rel="stylesheet" href="{{ asset('css/normalize.css') }}">
     <link rel="stylesheet" href="{{ asset('app/styles/app.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="{{ $post->seo_title }}">
     <meta name="twitter:description" content="{{ $post->seo_description }}">
@@ -41,13 +42,14 @@
             <span class="date"><time class="date" datetime="{{$post->created_at->format('c')}}" itemprop="datePublished" pubdate=""> {{$post->created_at->format('M d, Y')}}</time></span>
             <span class="tag">#<a href="{{ url('/tag/'.$post->tag->tag_flag) }}">{{ $post->tag->tag_name }}</a></span>
         </div>
-        <div class="post-title">
-            <h1>{{ $post->title }}</h1>
-        </div>
+        
+        <h1 class="post-title">{{ $post->title }}</h1>
+        <p class="post-description">{{ $post->seo_description }}</p>
+
     </section>
 
     <div class="wlog-post__body">
-        <article class="post-body__content wlog-md-body">   
+        <article class="post-body__content wlog-md-body entry">   
             {!! $post->content !!}   
         </article>
     </div>
@@ -93,7 +95,7 @@
     */
     (function() { // DON'T EDIT BELOW THIS LINE
     var d = document, s = d.createElement('script');
-    s.src = 'https://lazade.disqus.com/embed.js';
+    s.src = 'https://tsuzusalazade.disqus.com/embed.js';
     s.setAttribute('data-timestamp', +new Date());
     (d.head || d.body).appendChild(s);
     })();
