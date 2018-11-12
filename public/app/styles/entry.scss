@@ -1,0 +1,116 @@
+/**
+* Entry.css
+*
+* @author mzhou / @zhoumm
+* @version 1.5
+*/ 
+
+// size configuaraion, basic height is 16px
+$font-size: 18px;
+$line-height: 1.62;
+$line: 32px;
+$code-font-size: 14px;
+$pre-font-size: 14px;
+$pre-line-height: 16px;
+$h1-font-size: 28px;
+$h1-line-height: 16px + 32px;
+$h2-font-size: 24px;
+$h3-font-size: 22px;
+$h4-font-size: 20px;
+
+@import 'entry-config.scss';
+
+@mixin rounded-corners ($radius: 5px) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -ms-border-radius: $radius;
+    -o-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin start-with2word ($use-indent) {
+    @if $use-indent == true {
+        &:before {
+            content: '\3000\3000';
+            display: inline;
+        }
+    }
+}
+
+@mixin no-start-with2word ($use-indent) {
+    @if $use-indent == true {
+        &:before {
+            content: '';
+        }
+    }
+}
+
+@mixin background-linear-gradient ($pos: left, $start: rgba(255,255,255,0), $middle: white, $end: white) {
+    background-image: -webkit-linear-gradient($pos, $start 0%, $middle 80%, $end 100%);
+    background-image: -moz-linear-gradient($pos, $start 0%, $middle 80%, $end 100%);
+    background-image: -ms-linear-gradient($pos, $start 0%, $middle 80%, $end 100%);
+    background-image: -o-linear-gradient($pos, $start 0%, $middle 80%, $end 100%);
+    background-image: linear-gradient($pos, $start 0%, $middle 80%, $end 100%);
+}
+
+@mixin column ($width, $gap, $rule) {
+    // opera and IE 10+ support without prefix
+    -webkit-column-width: $width;
+    -webkit-column-gap: $gap;
+    -webkit-column-rule: $rule;
+        -moz-column-width: $width;
+        -moz-column-gap: $gap;
+        -moz-column-rule: $rule;
+            column-width: $width;
+            column-gap: $gap;
+            column-rule: $rule;
+}
+
+@mixin box-sizing ($box: border-box) {
+    -webkit-box-sizing: $box;
+    -moz-box-sizing: $box;
+    -ms-box-sizing: $box;
+    -o-box-sizing: $box;
+    box-sizing: $box;
+}
+
+@mixin layout-text ($layout) {
+    @if $layout == left {
+        margin-left: 0;
+        margin-right: auto;
+    } @else if $layout == center {
+        margin-left: auto;
+        margin-right: auto;
+    } @else if $layout == right {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@mixin layout-box ($layout) {
+    @if $layout == left {
+        margin-left: 0;
+        margin-right: auto;
+    } @else if ($layout = center) {
+        margin-left: auto;
+        margin-right: auto;
+    } @else if ($layout = right) {
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+
+@mixin layout-table ($layout) {
+    @if $layout == left {
+        margin-left: 1em;
+    } @else if ($layout = center) {
+        margin-left: auto;
+    } @else if ($layout = right) {
+        margin-left: auto;
+        margin-right: 1em;
+    }
+}
+
+@import 'entry-content.scss';
+// @import 'entry-opt.scss';
+

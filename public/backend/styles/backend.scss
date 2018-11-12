@@ -6,7 +6,7 @@ $wlog-background: #3D424C;
 $wlog-text-on-background: #ffffff;
 $wlog-text-in-form: #666666;
 
-@import "/backend/styles/fonts.css";
+@import "/css/fonts.css";
 @import "/backend/styles/layout.css";
 
 // animation
@@ -43,6 +43,8 @@ $wlog-text-in-form: #666666;
 
 html, body {
     font-size: 16px;
+    font-family: 'roboto', 'PingFang SC', 'Apple TP', sans-serif;
+    font-style: normal;
 }
 
 // transition
