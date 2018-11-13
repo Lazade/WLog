@@ -34,7 +34,7 @@ return [
         'type' => 'DropboxV2',
         'token' => env('DROPBOX_BACKUP_TOKEN'),
         'key' => env('DROPBOX_BACKUP_KEY'),
-        'secret' => env('DROPBOX_BACKUP_TOKEN'),
+        'secret' => env('DROPBOX_BACKUP_SECRET'),
         'app' => '',
         'root' => '',
     ],

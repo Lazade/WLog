@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        
     ];
 
     /**
@@ -25,9 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // automatic backup db to dropbox
-        $schedule->command(
-            "db:backup --database=mysql --destination=dropbox_db --destinationPath=wlog --timestamp='Y_m_d_H_i_s' --compression=gzip"
-        )->Daily();
+        $schedule->command("db:cloudbackup")->Daily();
     }
 
     /**
