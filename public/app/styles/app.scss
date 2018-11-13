@@ -12,6 +12,15 @@ $font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, 'PingFang SC', 
     box-sizing: border-box;
 }
 
+* {
+    transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    -moz-transition-duration: 250ms;
+    transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+    -webkit-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+    -moz-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
+}
+
 html, body {
     font-size: 16px;
     font-family: $font-family;
@@ -21,13 +30,6 @@ html, body {
 html, body {
     margin: 0;
     padding: 0;
-    transition-duration: .15s;
-    -webkit-transition-duration: .15s;
-    -moz-transition-duration: .15s;
-    transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
-    -webkit-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
-    -moz-transition-timing-function: cubic-bezier(0.4,0.0,0.2,1);
-    box-sizing: border-box;
 }
 
 html, body {
@@ -244,19 +246,22 @@ button {
     border-bottom: 2spx solid $wlog-link-color;
     margin-bottom: 55px;
     .wlog-body-article {
+        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
         height: 25vh;
-        box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.4);
-        border-radius: 0.5rem;
         margin-bottom: 30px;
+        border-radius: 0.5rem;
         position: relative;
         overflow: hidden;
         &:hover {
-            box-shadow: 2px 2px 12px 2px rgba(0, 0, 0, 0.4);
+            // box-shadow: 0px 0px 32px rgba(0, 0, 0, 0.5);
             a {
-                background: rgba(0, 0, 0, 0.5);
+                background: rgba(0, 0, 0, 0.35);
             }
             .article-content .title {
                 color: $wlog-theme-color;
+            }
+            .article-thumb {
+                transform: scale(1.1);
             }
         }
         &:last-of-type {
@@ -546,23 +551,23 @@ button {
     a {
         .tag {
             display: block;
-            font-weight: 500;
+            font-weight: 800;
             font-size: 0.875rem;
-            color: $wlog-ink-color;
+            color: $wlog-link-color;
         }
         .title {
             display: block;
             color: #1E2432;
             font-size: 1.5rem;
-            font-weight: 800;
-            line-height: 1.5;
+            font-weight: 500;
+            line-height: 1;
         }
         .des {
             display: block;
-            color: $wlog-ink-color;
-            font-size: 1.125rem;
-            font-weight: 500;
-            line-height: 1.3;
+            color: $wlog-link-color;
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
             letter-spacing: 0.2px;
         }
         &:hover {
@@ -601,11 +606,10 @@ button {
     }
 }
 
-// wlog-post__body
 .wlog-post__body 
 {
     margin-top: 3rem;
-    margin-bottom: 1.5rem; 
+    margin-bottom: 4rem; 
     .post-body__content {
         max-width: 760px;
         margin-left: auto;

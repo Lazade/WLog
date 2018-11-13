@@ -26,7 +26,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // automatic backup db to dropbox
-        $schedule->command("db:cloudbackup")->Daily();
+        // uncomment the following sentence if using schedule:run
+        // $schedule->command("db:cloudbackup")->Daily();
     }
 
     /**
