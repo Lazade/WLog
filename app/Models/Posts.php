@@ -60,7 +60,7 @@ class Posts extends Model
 
     public function previous()
     {
-        return $this->where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+        return $this->where([['id', '<', $this->id], ['state', '=', 1]])->orderBy('id', 'desc')->first();
     }
 
     public function GroupByYear($year)

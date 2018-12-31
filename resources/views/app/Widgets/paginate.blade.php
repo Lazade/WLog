@@ -9,7 +9,7 @@
                 @endif
             @endif
 
-            <span class="wlog-page-item wlog-page-number">{{ $paginator->currentPage() }} / {{ $paginator->total() }}</span>
+            <span class="wlog-page-item wlog-page-number">{{ $paginator->currentPage() }} / {{ $paginator->lastPage() }}</span>
             
             @if ($paginator->hasMorePages())
             <a rel="next" class="wlog-page-item wlog-page-button" href="{{  preg_replace("~(/page/\d+)?\?page=~", '/page/', $paginator->nextPageUrl()) }}">Previous &rarr;</a>
