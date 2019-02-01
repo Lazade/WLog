@@ -69,11 +69,17 @@ class AuthController extends Controller
 
     public function handleProviderGoogleCallBack()
     {
-        $auth_user = Socialite::driver('google')->user();
+        
+        try {
+            $auth_user = Socialite::drive('google')->user();
+        } catch (InvalidStateException $e) {
+            $auth_user = Socialite::driver('google')->stateless()->user();
+        }
+
         $token = $auth_user->token;
         $expiresAt = now()->addSeconds($auth_user->expiresIn);
         Cache::put('refresh_token', $token, $expiresAt);
-        return redirect()->to('/avalon/file');
+        return redirect()->to('/avalon/drive');
     }
 
 }
