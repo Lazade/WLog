@@ -165,6 +165,8 @@ return [
         BackupManager\Laravel\Laravel55ServiceProvider::class,
         // Adding Telegram-bot sdk
         Telegram\Bot\Laravel\TelegramServiceProvider::class,
+        // Adding GoogleService
+        App\Providers\GoogleClientProvider::class,
 
     ],
 

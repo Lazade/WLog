@@ -9,16 +9,16 @@ namespace App\Http\Controllers\Backend;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Wlog\Storage\Dropbox;
+// use App\Wlog\Storage\Dropbox;
 use App\Wlog\Storage\Local;
 
 class FileController extends Controller
 {
-    public function index(Dropbox $dropbox, Request $request)
-    {
-        $files = $dropbox->localFiles($request);
-        return view('backend.file', compact('files'));
-    }
+    // public function index(Dropbox $dropbox, Request $request)
+    // {
+    //     $files = $dropbox->localFiles($request);
+    //     return view('backend.file', compact('files'));
+    // }
 
     public function getMore(Dropbox $dropbox, Request $request)
     {
@@ -26,11 +26,11 @@ class FileController extends Controller
         return response()->json($file);
     }
 
-    public function store(Dropbox $dropbox, Request $request)
-    {
-        $names = array_diff(explode(',', $request['info']), ['']);
-        return $dropbox->uploads($names);
-    }
+    // public function store(Dropbox $dropbox, Request $request)
+    // {
+    //     $names = array_diff(explode(',', $request['info']), ['']);
+    //     return $dropbox->uploads($names);
+    // }
 
     /**
      * Remove the specified resource from storage.
@@ -38,11 +38,11 @@ class FileController extends Controller
      * @param  Request $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Dropbox $dropbox, Request $request)
-    {
-        $ids = array_diff(explode(',',$request['id']),['']);
-        return $dropbox->delete($ids);
-    }
+    // public function destroy(Dropbox $dropbox, Request $request)
+    // {
+    //     $ids = array_diff(explode(',',$request['id']),['']);
+    //     return $dropbox->delete($ids);
+    // }
 
     public function uploadLogo(Local $local, Request $request) 
     {

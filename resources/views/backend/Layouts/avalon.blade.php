@@ -40,7 +40,7 @@
                     <a class="layout-drawer-list__item wlog-list__item @if ($current == 'trash') active @endif" href="{{ url('avalon/trash/') }}">
                         <i class="fas fa-trash"></i> Trash
                     </a>
-                    <a class="layout-drawer-list__item wlog-list__item @if ($current == 'photo') active @endif" href="{{ url('avalon/file/') }}">
+                    <a class="layout-drawer-list__item wlog-list__item @if ($current == 'photo') active @endif" href="{{ url('avalon/drive/') }}">
                         <i class="fas fa-images"></i> Photo
                     </a>
                     <!-- <a class="layout-drawer-list__item wlog-list__item @if ($current == 'subscription') active @endif " href="{{ url('avalon/subscription/') }}">
@@ -82,6 +82,16 @@
             </section>
         </div>
     </div>
+    <footer class="wlog-footer-for-mobi">
+        <nav class="inner">
+            <a href="{{ url('avalon/posts/') }}">
+                <i class="fas fa-book"></i><span>Post</span>
+            </a>
+            <a href="{{ url('avalon/tags') }}">
+                <i class="fas fa-tags"></i><span>Tag</span>
+            </a>
+        </nav>
+    </footer>
 </body>
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
 <script src="{{ asset('backend/scripts/backend-common.js') }}"></script>

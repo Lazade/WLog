@@ -29,7 +29,6 @@ return [
         'endpoint' => 'https://identity.api.rackspacecloud.com/v2.0/',
         'root' => '',
     ],
-    // change "dropbox" to dropbox_db avoidng conficting because of the name.
     'dropbox_db' => [
         'type' => 'DropboxV2',
         'token' => env('DROPBOX_BACKUP_TOKEN'),

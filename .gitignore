@@ -2,6 +2,7 @@
 /public/hot
 /public/storage
 /public/.DS_Store
+*/.DS_Store
 /storage/*.key
 /vendor
 /.idea

@@ -27,6 +27,8 @@ Route::group(['namespace' => 'App'], function() {
 // Back-end login
 Route::group(['prefix' => 'avalon', 'namespace' => 'Backend'], function () {
     Route::get('/login', 'AuthController@showLogin')->name('admin.showLogin');
+    Route::get('/login/google', 'AuthController@redirectToGoogleProvider');
+    Route::get('/login/google/callback', 'AuthController@handleProviderGoogleCallBack');
     Route::post('/auth/check', 'AuthController@check')->name('admin.login_check');
     Route::post('/auth/logout', 'AuthController@logout')->name('admin.logout');
     Route::post('/auth/login', 'AuthController@authenticate')->name('admin.login');
@@ -54,12 +56,17 @@ Route::group(['prefix' => 'avalon', 'middleware' => 'auth', 'namespace' => 'Back
     Route::post('/profile/resetUsername', 'ProfileController@resetUsername')->name('profile.resetUsername');
     Route::resource('/trash', 'TrashController');
     Route::post('/trash/restore/{id}', 'TrashController@restore');
-    Route::resource('/file', 'FileController');
-    Route::post('/file/destroy', 'FileController@destroy');
-    Route::post('/file/getMore', 'FileController@getMore');
     Route::post('/file/uploadLogo', 'FileController@uploadLogo');
+
+    Route::group(['middleware' => 'oauth'], function() {
+        Route::get('/drive', 'DriveController@fileList');
+        Route::post('/drive', 'DriveController@upload');
+        Route::get('/drive/refresh', 'DriveController@refresh');
+        Route::post('/drive/delete', 'DriveController@delete');
+    });
 
     // Lab test
     // Route::get('/test', 'LabController@test');
+    // Route::get('/drive/', 'DriveController@index');
 });
 

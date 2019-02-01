@@ -96,7 +96,7 @@
 
             <div class="operation-board">
                 <form id="wlog-ajax-form" class="fab-form">
-                    <div id="progress_bar"></div>
+                    <div id="progress_bar"><div class="progress"></div></div>
                     <div class="buttons-area">
                         <div class="wlog-button-rect">
                             new
@@ -136,109 +136,120 @@
 </script>
 <script>
 
-    $('#images-area .folder-container').on('click', 'button', function(e) {
-        let currentTarget = e.target;
-        let imgSrc = $(currentTarget).parent().parent().find('img').attr('src');
-        if ($(currentTarget).hasClass('wlog-set-thumb')) {
-            $('.image-place').find('input').val(imgSrc);
-            $('.image-place')[0].style.backgroundImage = 'url('+imgSrc+')';
-        } else if ($(currentTarget).hasClass('wlog-insert')) {
-            let mdString = '![]('+imgSrc+')';
-            insertString = editor.value() + '\n' + mdString;
-            editor.value(insertString);
-        } else {
-            return;
-        }
-    });
-
-    function fileDetect(files) {
-        var namesList = new Array();
-        for (var i in files) {
-            if (typeof(files[i]) != 'object') {
-                continue;
-            }
-            if ( /image\/\w+/.test(files[i].type) ) {
-                namesList.push(files[i].name);
-            } else {
-                return false;
-            }
-        }
-        return namesList;
+$('#images-area .folder-container').on('click', 'button', function(e) {
+    let currentTarget = e.target;
+    let imgSrc = $(currentTarget).parent().parent().find('img').attr('src');
+    if ($(currentTarget).hasClass('wlog-set-thumb')) {
+        $('.image-place').find('input').val(imgSrc);
+        $('.image-place')[0].style.backgroundImage = 'url('+imgSrc+')';
+    } else if ($(currentTarget).hasClass('wlog-insert')) {
+        let mdString = '![]('+imgSrc+')';
+        insertString = editor.value() + '\n' + mdString;
+        editor.value(insertString);
+    } else {
+        return;
     }
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+});
 
-    $('#getMoreBtn').click(function(){
-        var _this = $(this);
-        $.ajax({
-            url: '/avalon/file/getMore',
-            type: 'POST',
-            cache: false,
-            processData: false,
-            contentType: false,
-            beforeSend: function() {
-                $('#images-area .folder-container').html('');
-                _this.addClass('loading');
-            },
-            success: function(result) {
-                for (var i in result.data) {
-                    var div = '<div class="image-list-card"><div class="image-file"><img src="'+result.data[i]['path']+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
-                    $('#images-area .folder-container').append(div);
-                }
-            },
-            complete: function() {
-                _this.removeClass('loading');
-            },
-        });
-    });
-
-    $('#file').on('change', function() {
-        if ($('#file').val() == '') return;
-        var path = $('#file')[0].files;
-        var ret = fileDetect(path);
-        if (!ret) {
-            return;
-        } 
-        var formData = new FormData();
-        var names = '';
-        for ( var i = 0, name; i < path.length; i++ ) {
-            name = $.md5(path[i].name);
-            formData.append(name, path[i]);
-            names += name + ',';
+function fileDetect(files) {
+    var namesList = new Array();
+    for (var i in files) {
+        if (typeof(files[i]) != 'object') {
+            continue;
         }
-        formData.append('info', names);
-        $.ajax({
-            url: '/avalon/file',
-            type: 'POST',
-            cache: false,
-            data: formData,
-            processData: false,
-            contentType: false,
-            beforeSend: function() {
-                $('#progress_bar').show();
-                $('#progress_bar').css('width', 0);
-            },
-            success: function(result) {
-                if (result.status == 200) {
-                    for (var i in result.info) {
-                        if (result.info[i].head_state == 200) {
-                            var div = '<div class="image-list-card"><div class="image-file"><img src="'+result.info[i].url+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
-                            $('#images-area .folder-container').append(div);
-                        }
+        if ( /image\/\w+/.test(files[i].type) ) {
+            namesList.push(files[i].name);
+        } else {
+            return false;
+        }
+    }
+    return namesList;
+}
+
+function onprogress(evt){   
+    console.log(evt);
+    var loaded = evt.loaded;
+    var tot = evt.total;
+    $('#progress_bar').css('width', Math.floor(100*loaded/tot)+'%')
+
+}
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$('#getMoreBtn').click(function(){
+    var _this = $(this);
+    $.ajax({
+        url: '/avalon/drive/refresh',
+        type: 'GET',
+        cache: false,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('#images-area .folder-container').html('');
+            _this.addClass('loading');
+        },
+        success: function(result) {
+            for (var i in result.data) {
+                var div = '<div class="image-list-card"><div class="image-file"><img src="//drive.google.com/uc?id='+result.data[i].id+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
+                $('#images-area .folder-container').append(div);
+            }
+        },
+        complete: function() {
+            _this.removeClass('loading');
+        },
+    });
+});
+
+$('#file').on('change', function() {
+    if ($('#file').val() == '') return
+    var path = $('#file')[0].files
+    var ret = fileDetect(path)
+    if (!ret) {
+        alert('File type or size is Incompliant. Choose Again.')
+        return
+    } 
+    var formData = new FormData();
+    var names = '';
+    for ( var i = 0, name; i < path.length; i++ ) {
+        name = $.md5(path[i].name);
+        formData.append(name, path[i]);
+        names += name + ',';
+    }
+    formData.append('info', names);
+    $.ajax({
+        url: '/avalon/drive',
+        type: 'POST',
+        cache: false,
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('#progress_bar').show();
+            $('#progress_bar').css('width', 0);
+        },
+        success: function(result) {
+            if (result.status == 200) {
+                for (var i in result.info) {
+                    if (result.info[i].head_state == 200) {
+                        var div = '<div class="image-list-card"><div class="image-file"><img src="//drive.google.com/uc?id='+result.info[i].id+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
+                        $('#images-area .folder-container').append(div);
                     }
                 }
-            },
-            xhr: function() {
-                var xhr = $.ajaxSettings.xhr();
-                if (onprogress && xhr.upload) {
-                    xhr.upload.addEventListener("progress", onprogress, false);
-                    return xhr;
-                }
             }
-        });
+        },
+        xhr: function() {
+            var xhr = $.ajaxSettings.xhr();
+            if (onprogress && xhr.upload) {
+                xhr.upload.addEventListener("progress", onprogress, false);
+                return xhr;
+            }
+        }
     });
+});
+
 </script>
 @endsection

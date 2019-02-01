@@ -84,13 +84,28 @@ function cleanResultList() {
     $('#info-table').html('');
 }
 
+function render(data) {
+    var html = ''
+    html += '<div class="layout-img__item wlog-img__item">'
+    html += '<div class="item__inner">'
+    html += '<div class="img-container">'
+    html += '<img src="//drive.google.com/uc?id='+data.id+'" alt="'+data.name+'" id_value="'+data.id+'" >'
+    html += '</div>'
+    html += '<div class="info">'
+    html += '<p class="info-name">'+data.name+'</p>'
+    html += '</div>'
+    html += '</div>'
+    html += '</div>'
+    return html
+}
+
 function showResultList(list) {
     $('.wlog-info-button').removeClass('focues');
     $('.wlog-floating-area .wlog-info-table').hide();
     var html = '<ul>';
     for (var i in list) {
         var color = list[i].head_state == 200 ? 'green' : 'red';
-        html += '<li><span class="file-name">'+list[i].file+'</span><span class="status" style="color: '+color+'">'+list[i].status+'</span></li>';
+        html += '<li><span class="file-name">'+ list[i].id +'</span><span class="status" style="color: '+color+'">'+list[i].status+'</span></li>';
     }
     html += '</ul>';
     $('#info-table').append(html);
@@ -136,7 +151,7 @@ $('#file').on('change', function() {
     }
     formData.append('info', names);
     $.ajax({
-        url: '/avalon/file',
+        url: '/avalon/drive',
         type: 'POST',
         cache: false,
         data: formData,
@@ -150,13 +165,16 @@ $('#file').on('change', function() {
             $('.wlog-upload-button').removeClass('focus');
             $('.wlog-floating-area .wlog-floating').hide(100);
             if (result.status == 200) {
+                var html = ''
                 for (var i in result.info) {
+                    console.log(result.info[i].head_state);
                     if (result.info[i].head_state == 200) {
-                        var div = '<div class="layout-img__item wlog-img__item"><div class="item__inner"><div class="img-container"><img src="'+result.info[i].url+'" id_value="'+result.info[i].id+'"></div><div class="info"><p class="info-name">'+result.info[i].file+'</p><p class="info-date">'+result.info[i].date+'</p></div></div></div>';
-                        $('.wlog-img__list').append(div);
+                        html = render(result.info[i])
+                        $('.wlog-files .layout-img__list').prepend(html)
                     }
                 }
                 showResultList(result.info);
+                
             } else {
                 alert(result.errors.info);
             }
@@ -178,7 +196,7 @@ $('.wlog-delete-confirm').click(function() {
     });
     formData.append('id', file_list);
     $.ajax({
-        url: '/avalon/file/destroy',
+        url: '/avalon/drive/delete',
         type: 'POST',
         cache: false,
         data: formData,
@@ -205,3 +223,31 @@ $('.wlog-delete-confirm').click(function() {
     });
 
 });
+
+$('#refresh').click(function (){
+    html = ''
+    $.ajax({
+        url: '/avalon/drive/refresh',
+        type: 'GET',
+        cache: false,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            $('.wlog-files .layout-img__list').html('')
+        },
+        success: function(result) {
+            if (result.state) {
+                for (var i in result.data) {
+                    html = render(result.data[i])
+                    $('.wlog-files .layout-img__list').prepend(html)
+                }
+            }
+        },
+        error: function() {
+
+        },
+        complete: function() {
+
+        },
+    })
+})

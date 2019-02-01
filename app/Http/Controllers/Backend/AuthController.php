@@ -7,10 +7,13 @@
 
 namespace App\Http\Controllers\Backend;
 
+use Socialite;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\User;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -22,26 +25,23 @@ class AuthController extends Controller
     
     public function authenticate(Request $request) 
     {
-        // dd($request);
         $post = $request->input();
         if (!array_key_exists('remember', $post)) {
             $post = array_merge($post, [
                 'remember' => 'off',
             ]);;
         }
-        // dd($post);
-        // !$post['remember'] ? 'off' : 'on';
         if (Auth::attempt(['email' => $post['emailorname'], 'password' => $post['password']], $post['remember']) 
             || Auth::attempt(['name' => $post['emailorname'], 'password' => $post['password']], $post['remember'])
         ) {
             return redirect()->intended('dashboard');
-            // return redirect('/avalon/');
         } else {
             $data = [
                 'status' => 403,
                 'info' => 'Incorrect Email/Name Or Password.'
             ];
-            return response()->json($data);
+            // return response()->json($data);
+            return redirect()->back()->withInput()->withErrors($data['info']);
         }
     }
 
@@ -57,6 +57,23 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect('/');
+    }
+
+    // google oauth
+
+    public function redirectToGoogleProvider()
+    {
+        $parameters = ['access_type' => 'offline'];
+        return Socialite::driver('google')->scopes(['https://www.googleapis.com/auth/drive'])->with($parameters)->redirect();
+    }
+
+    public function handleProviderGoogleCallBack()
+    {
+        $auth_user = Socialite::driver('google')->user();
+        $token = $auth_user->token;
+        $expiresAt = now()->addSeconds($auth_user->expiresIn);
+        Cache::put('refresh_token', $token, $expiresAt);
+        return redirect()->to('/avalon/file');
     }
 
 }

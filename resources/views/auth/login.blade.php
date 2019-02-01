@@ -16,6 +16,9 @@
 </head>
 <body class="wlog-login home">
     <div class="wlog-login-panel">
+
+        @include('backend.Widgets.alert')
+
         <header>
             <div class="logo"><img src="{{ asset('storage/logo.png') }}" alt="WLog"></div>
             <p class="name">WLOG - Login</p>
@@ -46,4 +49,7 @@
         </div>
     </div>
 </body>
+
+<script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ asset('backend/scripts/backend-common.js') }}"></script>
 </html>

@@ -8,6 +8,7 @@
                 <i class="fas fa-search"></i><input type="text" placeholder="Search...">
             </div>
             <div class="tool-bar__action buttons-area">
+                <button class="wlog-button wlog-button-small wlog-refresh-button" id="refresh"><i class="fas fa-sync"></i></button>
                 <button class="wlog-button wlog-button-small wlog-info-button"><i class="fas fa-info"></i></button>
                 <button class="wlog-button wlog-button-small wlog-upload-button"><i class="fas fa-cloud-upload-alt"></i></button>
                 <button class="wlog-button wlog-button-small wlog-delete-option-button"><i class="fas fa-trash"></i></button>
@@ -47,11 +48,10 @@
                 <div class="layout-img__item wlog-img__item">
                     <div class="item__inner">
                         <div class="img-container">
-                            <img src="{{ asset($file['path']) }}" alt="" path="{{ $file['path'] }}" id_value="{{ $file['id'] }}" created_at="{{ $file['created_at'] }}" updated_at="{{ $file['updated_at'] }}" />
+                        <img src="//drive.google.com/uc?id={{ $file['id'] }}" alt="{{ $file['name'] }}" id_value="{{ $file['id'] }}" >
                         </div>
                         <div class="info">
                             <p class="info-name">{{ $file['name'] }}</p>
-                            <p class="info-date">{{ $file['created_at'] }}</p>
                         </div>
                     </div>
                 </div>

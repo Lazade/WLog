@@ -39,7 +39,7 @@ class Handler extends ExceptionHandler
     public function report(Exception $exception)
     {
         $log = Log::getLogger();
-        $log->pushHandler(new TelegramChatHandler());
+        // $log->pushHandler(new TelegramChatHandler());
         parent::report($exception);
     }
 
