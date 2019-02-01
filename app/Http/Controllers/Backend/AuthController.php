@@ -73,7 +73,7 @@ class AuthController extends Controller
         try {
             $auth_user = Socialite::drive('google')->user();
         } catch (InvalidStateException $e) {
-            $auth_user = Socialite::driver('google')->stateless()->user();
+            $auth_user = Socialite::drive('google')->stateless()->user();
         }
 
         $token = $auth_user->token;
