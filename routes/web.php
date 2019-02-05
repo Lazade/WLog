@@ -58,12 +58,12 @@ Route::group(['prefix' => 'avalon', 'middleware' => 'auth', 'namespace' => 'Back
     Route::post('/trash/restore/{id}', 'TrashController@restore');
     Route::post('/file/uploadLogo', 'FileController@uploadLogo');
 
-    Route::group(['middleware' => 'oauth'], function() {
-        Route::get('/drive', 'DriveController@fileList');
-        Route::post('/drive', 'DriveController@upload');
-        Route::get('/drive/refresh', 'DriveController@refresh');
-        Route::post('/drive/delete', 'DriveController@delete');
-    });
+    // route for drive -- dropbox
+    Route::get('/drive', 'DriveController@fileList');
+    Route::post('/drive', 'DriveController@upload');
+    Route::get('/drive/refresh', 'DriveController@refresh');
+    Route::post('/drive/delete', 'DriveController@delete');
+
 
     // Lab test
     // Route::get('/test', 'LabController@test');

@@ -48,7 +48,7 @@
                 <div class="layout-img__item wlog-img__item">
                     <div class="item__inner">
                         <div class="img-container">
-                        <img src="//drive.google.com/uc?id={{ $file['id'] }}" alt="{{ $file['name'] }}" id_value="{{ $file['id'] }}" >
+                        <img src="{{ $file['shared_link'] }}" alt="{{ $file['name'] }}" id_value="{{ $file['id'] }}" >
                         </div>
                         <div class="info">
                             <p class="info-name">{{ $file['name'] }}</p>

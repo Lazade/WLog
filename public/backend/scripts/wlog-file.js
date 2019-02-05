@@ -32,8 +32,8 @@ function showDeleteOption() {
         $('.wlog-img__list .wlog-img__item').each(function () {
             var file_checkbox = document.createElement('input');
             $(file_checkbox).attr("type", "checkbox");
-            $(file_checkbox).attr("name", "id[]");
-            $(file_checkbox).attr("value", $(this).find('img').attr('id_value'));
+            $(file_checkbox).attr("name", "filename[]");
+            $(file_checkbox).attr("value", $(this).find('.info-name').html());
             $(file_checkbox).addClass('file_checkbox');
             $(this).append(file_checkbox);
         });
@@ -89,7 +89,7 @@ function render(data) {
     html += '<div class="layout-img__item wlog-img__item">'
     html += '<div class="item__inner">'
     html += '<div class="img-container">'
-    html += '<img src="//drive.google.com/uc?id='+data.id+'" alt="'+data.name+'" id_value="'+data.id+'" >'
+    html += '<img src="'+data.shared_link+'" alt="'+data.title+'" id_value="'+data.id+'" >'
     html += '</div>'
     html += '<div class="info">'
     html += '<p class="info-name">'+data.name+'</p>'
@@ -194,7 +194,7 @@ $('.wlog-delete-confirm').click(function() {
     $('.file_checkbox:checked').each(function(){
         file_list += $(this).val() + ',';
     });
-    formData.append('id', file_list);
+    formData.append('filename', file_list);
     $.ajax({
         url: '/avalon/drive/delete',
         type: 'POST',
@@ -209,7 +209,7 @@ $('.wlog-delete-confirm').click(function() {
             for (var i in result.info) {
                 if (result.info[i].head_state == 200) {
                     file_checkbox.each(function() {
-                        if ($(this).val() == result.info[i].id) {
+                        if ($(this).val() == result.info[i].name) {
                             $(this).parent().remove();
                         }
                     });

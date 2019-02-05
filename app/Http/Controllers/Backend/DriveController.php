@@ -1,48 +1,30 @@
 <?php 
 
-/**
- * Created By Lazade with artisan
- * Created At 2019-01-06
- * */ 
+/** 
+ * Created By Lazade with Artisan
+ * Created At 2019-02-02
+*/
 
 namespace App\Http\Controllers\Backend;
 
-use Google_Client;
-use Google_Service_Drive;
-
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Wlog\Storage\GoogleDrive;
-use App\Wlog\Storage\Local;
+use App\Wlog\Storage\Dropbox;
 
-class DriveController extends Controller 
+class DriveController extends Controller
 {
 
-    protected $google_drive;
-    protected $file;
-    protected $appRoot = '14nk0vGirYXpa8VEBTjORgeiXuzCBajuO';
-
-    public function __construct(Google_Client $client)
+    // get files' list 
+    public function fileList(Dropbox $dropbox, Request $request)
     {
-        $this->middleware( function ($request, $next) use ($client) {
-            $client->refreshToken($request->attributes->get('token'));
-            $driveHandle = new Google_Service_Drive($client);
-            $this->google_drive = new GoogleDrive($driveHandle);
-            return $next($request);
-        });
-    }
-
-    // get files:
-    public function fileList()
-    {
-        $files = $this->google_drive->getFiles($this->appRoot, false);
+        $files = $dropbox->getFilesList(false);
         return view('backend.file', compact('files'));
     }
 
-    // refresh files:
-    public function refresh()
+    // refresh files' list
+    public function refresh(Dropbox $dropbox, Request $request)
     {
-        $files = $this->google_drive->getFiles($this->appRoot, true);
+        $files = $dropbox->getFilesList(true);
         $result = [
             'state' => true,
             'data' => $files,
@@ -50,25 +32,20 @@ class DriveController extends Controller
         return response()->json($result);
     }
 
-    // upload file(s): 
-    public function upload(Request $request)
+    // upload file(s)
+    public function upload(Dropbox $dropbox, Request $request)
     {
-        $name = array_diff(explode(',', $request['info']), ['']);
-        $response = $this->google_drive->store($name, $this->appRoot);
+        $names = array_diff(explode(',', $request['info']), ['']);
+        $response = $dropbox->uploadToDropbox($names);
         return response()->json($response);
     }
 
-    // delete file(s):
-    public function delete(Request $request)
-    {
-        $ids = array_diff(explode(',',$request['id']),['']);
-        $response = $this->google_drive->delete($ids, $this->appRoot);
-        return response()->json($response);
-    }
 
-    public function uploadLogo(Local $local, Request $request)
+    // delete file(s)
+    public function delete(Dropbox $dropbox, Request $request)
     {
-        $response = $local->store($request);
+        $filenames = array_diff(explode(',', $request['filename']), ['']);
+        $response = $dropbox->remove($filenames);
         return response()->json($response);
     }
 

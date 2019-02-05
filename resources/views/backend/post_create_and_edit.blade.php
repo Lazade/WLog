@@ -194,7 +194,7 @@ $('#getMoreBtn').click(function(){
         },
         success: function(result) {
             for (var i in result.data) {
-                var div = '<div class="image-list-card"><div class="image-file"><img src="//drive.google.com/uc?id='+result.data[i].id+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
+                var div = '<div class="image-list-card"><div class="image-file"><img src="'+result.data[i].shared_link+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
                 $('#images-area .folder-container').append(div);
             }
         },
@@ -235,7 +235,7 @@ $('#file').on('change', function() {
             if (result.status == 200) {
                 for (var i in result.info) {
                     if (result.info[i].head_state == 200) {
-                        var div = '<div class="image-list-card"><div class="image-file"><img src="//drive.google.com/uc?id='+result.info[i].id+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
+                        var div = '<div class="image-list-card"><div class="image-file"><img src="'+result.info[i].shared_link+'" alt="" /></div><div class="hidden-oper"><button class="wlog-set-thumb">As thumb</button><button class="wlog-insert">As insert</button></div></div>';
                         $('#images-area .folder-container').append(div);
                     }
                 }

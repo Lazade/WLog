@@ -1,140 +1,188 @@
 <?php 
 
-/**
- * Created By Lazade with artisan
- * Created At 2018-10-29
- * */ 
+/** 
+ * Created By Lazade
+ * Created At 2019-02-02
+*/
 
 namespace App\Wlog\Storage;
 
 use Storage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use League\Flysystem\Filesystem;
-use App\Models\Attachments;
 use Spatie\Dropbox\Client;
 use Spatie\FlysystemDropbox\DropboxAdapter;
+use Illuminate\Support\Facades\Cache;
 
 class Dropbox
 {
-    
-    // Properties: 
-      
+
+    // Properties:
+
     protected $file = [];
     protected $error = '';
-    protected $client;
-    protected $adapter;
-    protected $filesystem;
+    protected $token;
+
+    private $new_content_hash = [];
+    private $new_list_data = [];
 
     // Public Methods: 
 
-    public function __construct() 
+    public function __construct()
     {
-        $this->client = new Client(config('filesystems.disks.dropbox.access_token'));
-        $this->adapter = new DropboxAdapter($this->client);
-        $this->filesystem = new Filesystem($this->adapter);
+        $this->token = config('filesystems.disks.dropbox.access_token');
     }
 
-    public function localFiles(Request $request)
+    public function getFilesList($force)
     {
-        $rows = intval($request->rows) > 0 ? $request->rows : 20;
-        $list = Attachments::paginate($rows);
-        foreach ($list as $key => $item) {
-            $ori_path = $item['path'];
-            $path = str_replace('www', 'dl', $ori_path);
-            $temp = explode('/', str_replace('?dl=0', '', $path));
-            $name = end($temp);
-            $list[$key]['path'] = $path;
-            $list[$key]['name'] = $name;
+        if ($force || !Cache::has('drive_file')) {
+            $this->__getList();
         }
-        return $list;
+        return Cache::get('drive_file');
     }
 
-    public function uploads($name)
+    public function uploadToDropbox($name)
     {
-        if (!$this->checkFile($name)) {
-            return ['status' => 500, 'info' => ['error' => $this->error]]; 
+        if (!$this->__checkFile($name)) {
+            return [
+                'status' => 500,
+                'info' => [
+                    'error' => $this->error,
+                ],
+            ];
         }
+
         $info = [];
+        $new_content_hash = [];
+        $new_list_data = [];
         foreach ($this->file as $file) {
-            $fileObject = $this->fileExists($file['file']);
-            if (!empty($fileObject)) {
+            if ($this->__fileExists($file['file'])) {
                 $info[] = [
                     'head_state' => 201,
-                    'file' => $file['name'],
-                    'status' => ' Existed',
+                    'id' => $file['name'],
+                    'status' => 'already existed',
                 ];
                 continue;
-            }
-            $result = $this->put($file);
-            if ($result != false) {
-                $info[] = [
+            }    
+            $result = $this->upload($file);
+            if ($result) {
+                $temp = [
                     'head_state' => 200,
-                    'status' => ' Uploaded Successfully.',
-                    'file' => $result['filename'],
-                    'url' => $result['shareUrl'],
+                    'status' => 'uploaded successfully',
+                    'name' => $result['name'],
+                    'title' => $result['name'],
                     'id' => $result['id'],
-                    'date' => $result['date'],
+                    'shared_link' => str_ireplace('www', 'dl', $this->list_shared_links($result['name'])),
                 ];
+                $new_content_hash[] = $result['content_hash'];
+                $new_list_data[] = [
+                    'id' => $temp['id'],
+                    'name' => $temp['name'],
+                    'title' => $temp['title'],
+                    'shared_link' => $temp['shared_link'],
+                ];
+                $info[] = $temp;
             } else {
-                $info[] = [
+                $info [] = [
                     'head_state' => 500,
                     'file' => $file['name'],
                     'status' => $this->error,
                 ];
             }
         }
-        return ['acttion' => 'uploads', 'status' => 200, 'info' => $info];
+
+        $this->__updateCache($new_list_data, $new_content_hash);
+
+        return [
+            'action' => 'uploads',
+            'status' => '200',
+            'info' => $info,
+        ];
+
     }
 
-    public function delete($ids)
+    public function remove($filenames)
     {
         $info = [];
-        foreach ($ids as $key => $id) {
-            $file = Attachments::where('id', $id)->first();
-            $temp = explode('/', str_replace('?dl=0', '', $file->path));
-            $name = end($temp);
-            // get specific file's path
-
-            $result = $this->remove($name);
-            if ($result['status']) {
-                if ($this->removeFileFromDB($id)) {
-                    $info[] = [
-                        'head_state' => 200,
-                        'file' => $result['name'],
-                        'id' => $id,
-                        'status' => 'delete success',
-                    ];
-                } else {
-                    $info[] = [
-                        'head_state' => 500,
-                        'file' => $result['name'],
-                        'status' => 'delete success - DataBase ERROR',
-                    ];
-                }
+        $new_list_data = [];
+        $new_content_hash = [];
+        foreach ($filenames as $key => $filename) {
+            $result = $this->delete($filename);
+            if ($result !== false) {
+                $info[] = [
+                    'head_state' => 200,
+                    'status' => 'delete success',
+                    'name' => $result['metadata']['name'],
+                    'id'   => $result['metadata']['id'],
+                ];
+                $new_list_data[] = [
+                    'id' => $result['metadata']['id'],
+                    'name' => $result['metadata']['name'],
+                ];
+                $new_content_hash[] = $result['metadata']['content_hash'];
             } else {
                 $info[] = [
                     'head_state' => 500,
-                    'file' => $result['name'],
-                    'status' => 'delete success - '.$result['error'],
+                    'id' => $filename,
+                    'status' => 'delete error', 
                 ];
             }
-            // continue;
         }
-        return ['action' => 'delete', 'info' => $info];
+
+        $this->__updateCache($new_list_data, $new_content_hash, false);
+
+        return [
+            'action' => 'delete', 
+            'info' => $info
+        ];
     }
 
-    // Private Methods: 
+    // private method
+    private function __updateCache($new_list_data, $new_content_hash, $isAdd = true) 
+    {
+        $drive_file = Cache::get('drive_file');
+        $file_hash = Cache::get('file_hash');
+        if ($isAdd === true) {
+            $drive_file = array_merge($drive_file, $new_list_data);
+            $file_hash = array_merge($file_hash, $new_content_hash);
+        } else {
+            foreach ($new_content_hash as $hash) {
+                $key = array_keys($file_hash, $hash);
+                unset($file_hash[end($key)]);
+            }
+            foreach ($new_list_data as $value) {
+                foreach ($drive_file as $key => $df) {
+                    if ($value['id'] == $df['id']) {
+                        unset($drive_file[$key]);
+                    }
+                }
+            }
+        }
+        $expiresAt = Carbon::now()->addDays(3);
+        Cache::put('drive_file', $drive_file, $expiresAt);
+        Cache::put('file_hash', $file_hash, $expiresAt);
+    }
 
-    /** 
-     * checkFile: check files, which get from request, whether existed and valid
-     * @param string name
-     * @return boolean 
-     * 
-     * */ 
-    private function checkFile($name)
+    private function __getList()
+    {
+        $this->list_folder();
+        $files = $this->list_shared_links();
+        $drive_file = [];
+        foreach ($files['links'] as $file) {
+            $drive_file[] = [
+                'id' => $file['id'],
+                'name' => $file['name'],
+                'title' => $file['name'],
+                'shared_link' => str_ireplace('www', 'dl', $file['url']),
+            ];
+        }
+        $expiresAt = Carbon::now()->addDays(3);
+        Cache::put('drive_file', $drive_file, $expiresAt);
+    }
+
+    private function __checkFile($name)
     {
         foreach ($name as $file) {
             if (!app('request')->hasFile($file)) {
@@ -153,195 +201,181 @@ class Dropbox
         return true;
     }
 
-    /** 
-     * put: get specific file's information and save
-     * @param object $fileObject
-     * @return mixed array/boolean
-     * 
-    */
-    private function put($fileObject) 
+    private function __fileExists($file)
     {
-        $name = $fileObject['name'];
-        $file = $fileObject['file'];
-        $ext = $file->extension();
-        $realPath = $file->getRealPath();
-        $fileName = $name.'.'.$ext;
-        $contents = file_get_contents($realPath);
-        $result = $this->filesystem->put($fileName, $contents, ['visibility' => 'public']);
-        if ($result) {
-            $hash1 = sha1_file($file->getRealPath());
-            $md5 = md5_file($file->getRealPath());
-            $shareurl = $this->checkShareLink($fileName);
-
-            if ($shareurl != '' && !is_null($shareurl)) {
-                $response = $this->saveFileUrl($shareurl, $hash1, $md5);
-            } else {
-                $this->error = 'Can not get ShareUrl';
-                return false;
-            }
-
-            if (!empty($response)) {
-                $arr = array(
-                    'shareUrl' => str_replace('www', 'dl', $shareurl),
-                    'filename' => $fileName,
-                    'id' => $response->id,
-                    'date' => $response->created_at,
-                );
-                return $arr;
-            } else {
-                $this->error = 'Model save ERROR';
-                return false;
-            }
-        } else {
-            $this->error = 'Can not upload to Dropbox';
-            return false;
-        }
-    }
-
-    /** 
-     * fileExists: check the specific file whether exists in Database
-     * @param string $file
-     * @return mixed Object / null
-     * 
-     * */ 
-    private function fileExists($file) 
-    {
+        $size = 4 * 1024 * 1024;
         $realPath = is_string($file) ? $file : $file->getRealPath();
-        $hash1 = sha1_file($realPath);
-        $data = Attachments::where('hash1', $hash1)->first();
-        return $data;
+        $block_hash = '';
+        $fp = fopen($realPath, "rb");
+        while (!feof($fp)) {
+            $block = fread($fp, $size);
+            $block_hash .= hash('sha256', $block, true);
+            unset($block);
+        }
+        fclose($fp);
+        $hash = hash('sha256', $block_hash);
+        return in_array($hash, Cache::get('file_hash'));
     }
 
-    /** 
-     * saveFileUrl: call model to save file data to Database
-     * @param string $path
-     * @param string $hash1
-     * @param string $md5
-     * @return int $id : -1
-     * 
-     * */ 
-    private function saveFileUrl($path, $hash1, $md5)
+    // Dropbox Rest API
+
+    private function list_shared_links($filename = null)
     {
-        $attachment = new Attachments;
-        $attachment->path = $path;
-        $attachment->hash1 = $hash1;
-        $attachment->md5 = $md5;
-        if ($attachment->save()) {
-            return $attachment;
+        $ch = curl_init();
+        $header = array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->token
+        );
+        if (is_null($filename)) {
+            $params = json_encode(null);
         } else {
-            return -1;
+            $params = json_encode(array(
+                'path' => '/'.$filename,
+            ));
         }
-    }
-
-    /** 
-     * removeFileFromDB: call model to remove file data from Database
-     * @param int $id
-     * @return boolean 
-     * 
-    */
-    private function removeFileFromDB($id)
-    {
-        $attachment = new Attachments;
-        return $attachment->where('id', $id)->delete();
-    }
-
-    //  Dropbox rest API methods:
-
-    /** 
-     * getShareLink: generate specific file's sharelink from dropbox 
-     * @param string $fileName
-     * @return mixed array: error / string: sharelink
-     * 
-     * */ 
-    private function getShareLink($fileName) 
-    {
-        $ch = curl_init(); 
-        $header = array(
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . config('filesystems.disks.dropbox.access_token')
-        );
-        $params = json_encode(array(
-            "path" => "/".$fileName,
-            "settings" => array("requested_visibility"=>"public"),
-        ));
-
-        curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
-        curl_setopt( $ch, CURLOPT_POSTFIELDS, $params);
-        curl_setopt( $ch, CURLOPT_URL, 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings');
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-        curl_setopt( $ch, CURLOPT_POST, TRUE);
-        $api_response = curl_exec($ch);
-        if(curl_exec($ch) === false) {
-            return ['Curl error' => curl_error($ch)];
-        }
-        $json_response = json_decode($api_response, true);
-        return $json_response['url'];
-    }
-
-    /** 
-     * checkShareLink: check specific file's sharelink whether created, if not call Func(getShareLink)
-     * @param string $fileName 
-     * @return mixed array: error / string: sharelink
-     * 
-     * */ 
-    private function checkShareLink($fileName)
-    {
-        $ch = curl_init(); 
-        $header = array(
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . config('filesystems.disks.dropbox.access_token')
-        );
-        $params = json_encode(array(
-            "path" => "/".$fileName,
-        ));
-
         curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt( $ch, CURLOPT_URL, 'https://api.dropboxapi.com/2/sharing/list_shared_links');
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
         curl_setopt( $ch, CURLOPT_POST, TRUE);
-        $api_response = curl_exec($ch);
-        if(curl_exec($ch) === false) {
-            return ['Curl error' => curl_error($ch)];
+
+        try {
+            $api_response = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e->message());
         }
+
+        curl_close($ch);
         $json_response = json_decode($api_response, true);
-        if (empty($json_response['links'])) {
-            return $this->getShareLink($fileName);
+
+        if (array_key_exists('error', $json_response)) {
+
         } else {
-            return $json_response['links'][0]['url'];
+            if (is_null($filename)) {
+                return $json_response;
+            } else {
+                return empty($json_response['links']) ? $this->create_shared_link_with_settings($filename) : $json_response['links'][0];
+            }
         }
     }
 
-    /** 
-     * remove: remove specific file from dropbox
-     * @param string $fileName
-     * @return array
-     * 
-     * */ 
-    private function remove($fileName)
+    private function list_folder()
     {
         $ch = curl_init();
         $header = array(
             'Content-Type: application/json',
-            'Authorization: Bearer ' . config('filesystems.disks.dropbox.access_token')
+            'Authorization: Bearer ' . $this->token
         );
         $params = json_encode(array(
-            'path' => "/".$fileName,
+            'path' => '',
         ));
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $params);
+        curl_setopt( $ch, CURLOPT_URL, 'https://api.dropboxapi.com/2/files/list_folder');
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $ch, CURLOPT_POST, TRUE);
+        try {
+            $api_response = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e->message());
+        }
+        curl_close($ch);
+        $json_response = json_decode($api_response, true);
+        if (array_key_exists('entries', $json_response)) {
+            $data = [];
+            foreach ($json_response['entries'] as $value) {
+                $data[] = $value['content_hash'];
+            }
+            $expiresAt = Carbon::now()->addDays(3);
+            Cache::put('file_hash', $data, $expiresAt);
+        }
+    }
+
+    private function upload($file)
+    {
+        $_file = $file['file'];
+        $ch = curl_init();
+        $params = json_encode(array(
+            'path' => '/' . $file['name'].'.'.$_file->extension(),
+            'autorename' => true,
+        ));
+        $header = array(
+            'Content-Type: application/octet-stream',
+            'Dropbox-API-Arg:' . $params,
+            'Authorization: Bearer ' . $this->token,
+        );
+        $stream = fopen($_file->getRealPath(), 'rb');
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
+        curl_setopt( $ch, CURLOPT_PUT, true );
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+        curl_setopt( $ch, CURLOPT_INFILE, $stream );
+        curl_setopt( $ch, CURLOPT_INFILESIZE, $_file->getSize());
+        curl_setopt( $ch, CURLOPT_URL, 'https://content.dropboxapi.com/2/files/upload');
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        try {
+            $api_response = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e->message());
+        }
+        curl_close($ch);
+        fclose($stream);
+        $json_response = json_decode($api_response, true);
+        return $json_response;
+    }
+
+    private function create_shared_link_with_settings($filename)
+    {
+        $ch = curl_init();
+        $args = json_encode(array(
+            'path' => '/'.$filename,
+            'settings' => array(
+                'requested_visibility' => 'public',
+            ),
+        ));
+        $header = array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->token,
+        );
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $args);
+        curl_setopt( $ch, CURLOPT_URL, 'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings');
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt( $ch, CURLOPT_POST, TRUE);
+        try {
+            $api_response = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e->message());
+        }
+        curl_close($ch);
+        return json_decode($api_response, true)['url'];
+    }
+
+    private function delete($filename)
+    {
+        $ch = curl_init();
+        $params = json_encode(array(
+            'path' => '/'.$filename,
+        ));
+        $header = array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $this->token,
+        );
         curl_setopt( $ch, CURLOPT_HTTPHEADER, $header );
         curl_setopt( $ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt( $ch, CURLOPT_URL, 'https://api.dropboxapi.com/2/files/delete_v2');
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
         curl_setopt( $ch, CURLOPT_POST, TRUE);
-        $api_response = curl_exec($ch);
-        if(curl_exec($ch) === false) {
-            return ['Curl error' => curl_error($ch)];
+        try {
+            $api_response = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e->message());
         }
         $json_response = json_decode($api_response, true);
+        curl_close($ch);
         if (array_key_exists('error', $json_response)) {
-            return ['status' => false, 'error' => $json_response['error']['.tag']];
+            return false;
         } else {
-            return ['status' => true, 'name' => $json_response['metadata']['name']];
+            return $json_response;
         }
     }
 
