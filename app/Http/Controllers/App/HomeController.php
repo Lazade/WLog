@@ -49,22 +49,23 @@ class HomeController extends Controller implements GeneratorInterface
     public function archive($year = '', Posts $posts)
     {
         $current = __FUNCTION__;
-        $hasLastYear = true;
+        $theYear = Carbon::now()->format('Y');
         $hasNextYear = true;
-        if ($year == '') {
-            $year = Carbon::now()->format('Y');
+        if ($year == '' || $theYear == $year) {
+            $year = $theYear;
             $hasNextYear = false;
-        } 
-        $post = $posts->groupByYear($year);
-        $lastYearPost = $posts->groupByYear($year-1);
-        if (count($lastYearPost) == 0) {
-            $hasLastYear = false;
+        } else {
+            $year = intval($year);
         }
+        $post = $posts->groupByYear($year);
+        $hasLastYear = count($posts->groupByYear($year - 1)) > 0 ? true : false;
         $data = [
-            'lastYear' => $hasLastYear ? $year - 1 : '',
-            'nextYear' => $hasNextYear ? $Year + 1 : '',
+            'hasLastYear' => $hasLastYear,
+            'hasNextYear' => $hasNextYear,
+            'lastYear' => ($year - 1),
+            'nextYear' => ($year + 1),
+            'thisYear' => $year,
             'posts' => $post,
-            'thisYear' => $year
         ];
         return view('app.archive')->with(compact('data', 'current'));
     }

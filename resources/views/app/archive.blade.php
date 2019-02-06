@@ -6,6 +6,9 @@
 
     <h2 class="wlog-page-name">ARCHIVE-{{ $data['thisYear'] }}</h2>
     <div class="wlog-body__content">
+        @if (count($data['posts']) === 0)
+        <p>Nothing Found.</p>
+        @else 
         @foreach ($data['posts'] as $post)
         <article class="wlog-body-article">
             @if ($post['thumb']) 
@@ -19,6 +22,7 @@
             </a>
         </article>
         @endforeach
+        @endif
     </div>
     <div class="wlog-body__footer">
         <div class="wlog-archive__paginate">
@@ -27,7 +31,7 @@
             @endif
             
             @if ($data['nextYear'] != '')
-            <a href="{{ url('/archive/'.$data['nextYear']) }}" class="page-button">{{ $data['lastYear'] }}<i class="fas fa-angle-right"></i></a>
+            <a href="{{ url('/archive/'.$data['nextYear']) }}" class="page-button">{{ $data['nextYear'] }}<i class="fas fa-angle-right"></i></a>
             @endif
         </div>
     </div>
